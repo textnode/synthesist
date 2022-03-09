@@ -36,8 +36,8 @@ from envelope import up, flat, down, down_30_pct
 class sequencer():
     def __init__(self):
         self.mutex = threading.Lock()
-        self.autonomous = []
         self.releasable = {}
+        self.autonomous = []
 
     def run_keyboard(self):
         print("Running keyboard: %s" % threading.get_native_id())
@@ -47,13 +47,20 @@ class sequencer():
             if(len(key) > 1):
                 with self.mutex:
                     print("Adding gen")
-                    self.autonomous.append(notes.striker(osc.square(441), up(duration=0.01), flat(duration=0.2), down(0.5)))
+                    self.autonomous.append(notes.striker(osc.square(441), up(duration=0.1), flat(duration=0.1), down(0.5)))
 
     def run_midi(self):
         print("Running midi: %s" % threading.get_native_id())
         midi.init()
         #this fails before I can use aconnect to wire the keyboard to the process - maybe put in a loop
-        mi=midi.Input(device_id=midi.get_default_input_id())
+
+        midi_input = None
+        while True:
+            try:
+                midi_input=midi.Input(device_id=midi.get_default_input_id())
+                break
+            except midi.MidiException:
+                pass
         while True:
             if midi_input.poll():
                 print("Midi polled")
@@ -66,7 +73,7 @@ class sequencer():
                                 self.releasable[note].release()
                         elif status==0x90:
                             print("Midi press")
-                            self.autonomous.append(notes.striker(osc.cosine(midi.midi_to_frequency(notes[key])), up(duration=0.01), flat(duration=0.2), down(0.5)))
+                            self.releasable[key] = notes.striker(osc.cosine(midi.midi_to_frequency(notes[key])), up(duration=0.01), flat(duration=0.2), down(0.5))
 
     def run_player(self):
         print("Running player: %s" % threading.get_native_id())
@@ -76,55 +83,75 @@ class sequencer():
         for index in range(shared.frames_per_buffer):
             audio.append(int(0))
 
-        dispatch_time = time.perf_counter_ns()
         dispatched_buffer_count = 0
+        dispatch_time = time.perf_counter_ns()
 
-        packed = struct.pack("<%si" % len(audio), *audio)
         while True:
-            if len(self.autonomous) == 0 or len(self.releasable) == 0:
-                dispatch_time = time.perf_counter_ns()
-                dispatched_buffer_count = 0
+            #print("Once more round the sun")
+            delete_releasable_keys = []
+            delete_autonomous = []
+
+            if (len(self.releasable) == 0) and (len(self.autonomous) == 0):
                 time.sleep(shared.frames_per_buffer / shared.sample_rate)
+                dispatched_buffer_count = 0
+                dispatch_time = time.perf_counter_ns()
             else:
-                for index in range(shared.frames_per_buffer):
-                    sig = 0.0
-                    len_sigs = 0
-                    with self.mutex:
-                        delete_releasable_keys = []
-                        release_keys = []
+                #print("%d releasable, %d autonomous" % (len(self.releasable), len(self.autonomous)))
+                with self.mutex:
+                    for index in range(shared.frames_per_buffer):
+                        sig = 0.0
+                        len_sigs = 0
+
                         for generator in self.autonomous:
-                            try:
-                                sig += next(generator)
-                                len_sigs += 1
-                            except:
-                                pass
+                            if generator not in delete_autonomous:
+                                try:
+                                    #print("Value from autonomous")
+                                    sig += next(generator)
+                                    len_sigs += 1
+                                except StopIteration:
+                                    delete_autonomous.append(generator)
+
                         for key, generator in self.releasable.items():
-                            try:
-                                sig += next(generator)
-                                len_sigs += 1
-                            except:
-                                delete_releasable_keys.append(key)
-                        for key in delete_releasable_keys:
-                            del self.releasable['a']
-                        for key in release_keys:
-                            self.autonomous.append(self.releasable[key])
-                            del self.releasable[key]
-                    if(len_sigs) > 0:
-                        sig = sig / len_sigs
-                    audio[index] = int(sig * shared.scaling)
+                            if key not in delete_releasable_keys:
+                                try:
+                                    #print("Value from releasable")
+                                    sig += next(generator)
+                                    len_sigs += 1
+                                except StopIteration:
+                                    delete_releasable_keys.append(key)
+
+                        if(len_sigs) > 0:
+                            sig = sig / len_sigs
+                            #print("SIG: %f" % sig)
+                        audio[index] = int(sig * shared.scaling)
+
+                    #print("Count of releasable to remove: %d" % len(delete_releasable_keys))
+                    for key in delete_releasable_keys:
+                        #print("Removing: %s" % key)
+                        del self.releasable[key]
+
+                    #print("Count of autonomous to remove: %d" % len(delete_autonomous))
+                    for gen in delete_autonomous:
+                        #print("Removing: %s" % gen)
+                        self.autonomous.remove(gen)
+
                 packed = struct.pack("<%si" % len(audio), *audio)
+                #print("before stream write")
+                stream.write(packed)
+                #print("after stream write")
+                dispatched_buffer_count += 1
 
                 elapsed_time = time.perf_counter_ns() - dispatch_time
-                dispatched_time = (dispatched_buffer_count * (shared.frames_per_buffer / shared.sample_rate) * 1000000000) 
-                print("Elapsed time: %d, dispatched time: %d" % (elapsed_time, dispatched_time))
+                dispatched_time = (dispatched_buffer_count * (shared.frames_per_buffer / shared.sample_rate) * 1000000000)
+                #print("Elapsed time: %d, dispatched time: %d" % (elapsed_time, dispatched_time))
                 if dispatched_time > elapsed_time:
                     print("Ahead by: %d" % (dispatched_time - elapsed_time))
-                    time.sleep((dispatched_time - elapsed_time) / 2)
+                    print("Sleep for: %f" % ((dispatched_time - elapsed_time) / (2 * 1000000000)))
+                    time.sleep((dispatched_time - elapsed_time) / (2 * 1000000000))
                 elif dispatched_time < elapsed_time:
-                    print("Behind by: %d after %d dispatched buffers" % (elapsed_time - dispatched_time, dispatched_buffer_count))
+                    pass
+                    #print("Behind by: %d after %d dispatched buffers" % (elapsed_time - dispatched_time, dispatched_buffer_count))
 
-                stream.write(packed)
-                dispatched_buffer_count += 1
 
 
 seq = sequencer()
