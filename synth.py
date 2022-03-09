@@ -27,6 +27,7 @@ import shared
 import oscillators as osc
 import notes
 from envelope import up, flat, down, down_30_pct
+import sounds
 
 #This class is a work-in-progress.
 #My machine is too slow to supply buffers quick enough to support glitch-free audio output - even with no notes playing!
@@ -46,8 +47,7 @@ class sequencer():
             #add some processing here to allow addition of different notes, oscillators, effects, etc...
             if(len(key) > 1):
                 with self.mutex:
-                    print("Adding gen")
-                    self.autonomous.append(notes.striker(osc.square(441), up(duration=0.1), flat(duration=0.1), down(0.5)))
+                    pass #do something interesting
 
     def run_midi(self):
         print("Running midi: %s" % threading.get_native_id())
@@ -63,17 +63,17 @@ class sequencer():
                 pass
         while True:
             if midi_input.poll():
-                print("Midi polled")
-                for(status,note,velocity,_),_ in midi_input.read(16):
-                    print("Midi event")
+                #print("Midi polled")
+                for(status,note,velocity,other),after in midi_input.read(16):
+                    print("Midi event: %s, %s, %s, %s, %s" % (status, note, velocity, other, after))
                     with self.mutex:
                         if status==0x80:
-                            print("Midi release")
+                            #print("Midi release")
                             if(note in self.releasable.keys()):
                                 self.releasable[note].release()
                         elif status==0x90:
-                            print("Midi press")
-                            self.releasable[key] = notes.striker(osc.cosine(midi.midi_to_frequency(notes[key])), up(duration=0.01), flat(duration=0.2), down(0.5))
+                            #print("Midi press")
+                            self.releasable[note] = sounds.phased(midi.midi_to_frequency(note), speed=velocity / 50.0)
 
     def run_player(self):
         print("Running player: %s" % threading.get_native_id())
@@ -142,15 +142,19 @@ class sequencer():
                 dispatched_buffer_count += 1
 
                 elapsed_time = time.perf_counter_ns() - dispatch_time
-                dispatched_time = (dispatched_buffer_count * (shared.frames_per_buffer / shared.sample_rate) * 1000000000)
+                dispatched_time = (dispatched_buffer_count * (shared.frames_per_buffer / shared.sample_rate) * 1000000000) 
                 #print("Elapsed time: %d, dispatched time: %d" % (elapsed_time, dispatched_time))
                 if dispatched_time > elapsed_time:
-                    print("Ahead by: %d" % (dispatched_time - elapsed_time))
-                    print("Sleep for: %f" % ((dispatched_time - elapsed_time) / (2 * 1000000000)))
-                    time.sleep((dispatched_time - elapsed_time) / (2 * 1000000000))
+                    pass
+                    #print("Ahead by: %d" % (dispatched_time - elapsed_time))
+                    #print("Sleep for: %f" % ((dispatched_time - elapsed_time) / (2 * 1000000000)))
+                    #time.sleep((dispatched_time - elapsed_time) / (2 * 1000000000))
                 elif dispatched_time < elapsed_time:
                     pass
                     #print("Behind by: %d after %d dispatched buffers" % (elapsed_time - dispatched_time, dispatched_buffer_count))
+                #print("here 1")
+            #print("here 2")
+        #print("here 3")
 
 
 
