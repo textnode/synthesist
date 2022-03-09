@@ -7,4 +7,4 @@ Requires pyaudio and pygame.
 
 Run "examples.py" for a basic flavour.
 
-N.B. synth.py is a work-in-progress to build an interactive synthesizer using computer keyboard and midi keyboard input.
+Run "synth.py" to take input from midi controller.
