@@ -30,16 +30,6 @@ seed = math.pi
 def plot(gen, max_duration=sample_rate * 10, title=None):
     # max_duration is here to save me from the easy mistake of passing in an infinite generator.
     audio = []
-    for sig in gen:
-        audio.append(sig)
-    plt.plot(audio)
-    if title != None:
-        plt.title(title)
-    plt.show()
-
-def plot_new(gen, max_duration=sample_rate * 10, title=None):
-    # max_duration is here to save me from the easy mistake of passing in an infinite generator.
-    audio = []
     for sig in itertools.islice(gen, 0, max_duration * sample_rate):
         audio.append(sig)
     plt.plot(audio)
@@ -47,22 +37,8 @@ def plot_new(gen, max_duration=sample_rate * 10, title=None):
         plt.title(title)
     plt.show()
 
+
 def play(gen, max_duration=sample_rate * 10):
-    # max_duration is here to save me from the easy mistake of passing in an infinite generator.
-    audio = array('i')
-    for samp in gen:
-        #print("sig: %f" % samp)
-        audio.append(int( (samp) * scaling))
-    packed = struct.pack("<%si" % len(audio), *audio)
-    audio = pyaudio.PyAudio()
-    stream = audio.open(rate=sample_rate, channels=1, format=pyaudio.paInt16, output=True, frames_per_buffer=frames_per_buffer)
-    stream.write(packed)
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
-
-def play_new(gen, max_duration=sample_rate * 10):
     # max_duration is here to save me from the easy mistake of passing in an infinite generator.
     audio = array('i')
     for samp in itertools.islice(gen, 0, max_duration * sample_rate):

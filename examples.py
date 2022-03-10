@@ -23,9 +23,17 @@ import envelope as env
 from notes import striker
 from effects import phaser, echo
 from noise import uniform_rand
-from util import minZeroer, fabser, combiner, multiplier
+from util import minZeroer, fabser, combiner, multiplier, offsetter, scaler
 
 #testing some combinations of oscillators, envelopes, echo and phasing
+
+#control = osc.cosine(1, start_phase=math.pi / 2)
+#scaled = scaler(control, scaling_factor=0.3)
+#offset = offsetter(scaled, offset=1.0)
+#shared.plot(offset)
+#sys.exit(0)
+
+
 
 cos = osc.cosine(441, end_phase=math.pi*2*441)
 shared.play(cos)
@@ -37,7 +45,7 @@ control = osc.cosine(1, start_phase=math.pi / 2)
 cos = osc.cosine(441, start_phase = math.pi / 2)
 cos_dup = osc.cosine(441, start_phase = math.pi / 2)
 phase = phaser(cos, cos_dup, 0, control)
-shared.play_new(phase, max_duration=2)
+shared.play(phase, max_duration=2)
 
 control = osc.cosine(1, start_phase=math.pi / 2)
 cos = osc.cosine(441, start_phase = math.pi / 2)
@@ -45,7 +53,7 @@ cos_dup = osc.cosine(441, start_phase = math.pi / 2)
 phase = phaser(cos, cos_dup, 0, control)
 strike = striker(phase, env.up(duration=0.201), env.flat(duration=0.401), env.down(duration=0.201))
 echo = echo(strike, 0.9, 0.8, 5)
-shared.play_new(echo)
+shared.play(echo)
 
 sig_env = env.sine(4, duration=10.0)
 min_env = fabser(sig_env)

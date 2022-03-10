@@ -63,12 +63,12 @@ class inverter(Generator):
         raise StopIteration
 
 class scaler(Generator):
-    def __init__(self, gen1, factor):
+    def __init__(self, gen1, scaling_factor):
         self.gen1 = gen1
-        self.factor = factor
+        self.scaling_factor = scaling_factor
 
     def send(self, ignored_arg):
-        return(next(self.gen1) * self.factor)
+        return(next(self.gen1) * self.scaling_factor)
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
@@ -80,6 +80,17 @@ class multiplier(Generator):
 
     def send(self, ignored_arg):
         return(next(self.gen1) * next(self.gen2))
+
+    def throw(self, type=None, value=None, traceback=None):
+        raise StopIteration
+
+class offsetter(Generator):
+    def __init__(self, gen1, offset):
+        self.gen1 = gen1
+        self.offset = offset
+
+    def send(self, ignored_arg):
+        return(next(self.gen1) + self.offset)
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
