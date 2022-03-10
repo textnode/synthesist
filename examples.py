@@ -27,14 +27,6 @@ from util import minZeroer, fabser, combiner, multiplier, offsetter, scaler
 
 #testing some combinations of oscillators, envelopes, echo and phasing
 
-#control = osc.cosine(1, start_phase=math.pi / 2)
-#scaled = scaler(control, scaling_factor=0.3)
-#offset = offsetter(scaled, offset=1.0)
-#shared.plot(offset)
-#sys.exit(0)
-
-
-
 cos = osc.cosine(441, end_phase=math.pi*2*441)
 shared.play(cos)
 
@@ -63,3 +55,12 @@ noise = uniform_rand(step_size=1, base_amplitude=1.0, envelope=noise_env, envelo
 add = combiner(sig, noise)
 strike = striker(add, env.up(3.0), env.down_30_pct(5.0), env.down(2.0))
 shared.play(strike)
+
+#construct and display a control signal
+control = osc.cosine(1, start_phase=math.pi / 2)
+scaled = scaler(control, scaling_factor=0.1)
+offset = offsetter(scaled, offset=0.8)
+shared.plot(offset, max_duration=1)
+
+
+
