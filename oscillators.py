@@ -101,16 +101,22 @@ class constant(Generator):
     def __init__(self, base_amplitude=1.0, time=None):
         self.samples = None
         if time != None:
-            self.samples = time * shared.sample_rate
+            self.samples = int(time * shared.sample_rate)
         self.base_amplitude = base_amplitude
 
     def send(self, ignored_arg):
         if(self.samples != None):
             if(self.samples > 0):
                 self.samples -= 1
-                return self.base_amplitude
-            raise StopIteration
+                #print("%s Samples remaining: %d" % (repr(self), self.samples))
+            else:
+                raise StopIteration
+        return self.base_amplitude
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
+
+class silence(constant):
+    def __init__(self, time=None):
+        super().__init__(base_amplitude=0.0, time=time)
 

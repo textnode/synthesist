@@ -18,7 +18,7 @@ from collections.abc import Generator
 import math
 
 
-class adder(Generator):
+class combiner(Generator):
     #returns mean of 2 input values
     def __init__(self, gen1, gen2):
         self.gen1 = gen1

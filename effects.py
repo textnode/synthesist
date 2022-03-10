@@ -15,8 +15,11 @@
 # Version 0.1
 
 from collections.abc import Generator
+import itertools
 
 import shared
+import util
+import oscillators as osc
 
 class phaser(Generator):
     def __init__(self, inp, input_to_be_delayed, initial_delay, control):
@@ -43,43 +46,36 @@ class phaser(Generator):
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
+class echo(Generator):
+    def __init__(self, generator, delay, decay, repeats):
+        current_delay = 0
+        current_amplitude = 1.0
+        copies = itertools.tee(generator, repeats+1)
+        self.generators = []
+        self.exhausted_generators = []
+        for copy in copies:
+            #print("Adding copy with delay: %f and amplitude: %f" % (current_delay, current_amplitude))
+            self.generators.append(itertools.chain(osc.silence(current_delay), util.scaler(copy, current_amplitude)))
+            current_delay += delay
+            current_amplitude *= decay
 
-class echoer(Generator):
-    def __init__(self, striker, delay, decay, repeats):
-        self.striker = striker
-        self.delay = int(delay * shared.sample_rate)
-        self.decay = decay
-        self.repeats = repeats
-        self.source = []
-        self.replay = []
-        self.amplitude = 1.0
-        self.replay_index = None
-        
     def send(self, ignored_arg):
-        try:
-            self.source.append(next(self.striker))
-            return self.source[-1]
-        except StopIteration:
-            pass
-        if len(self.replay) == 0:
-            for _ in range(self.repeats):
-                for _ in range(self.delay - len(self.source)):
-                    self.replay.append(0.0)
-                self.amplitude = self.amplitude * self.decay
-                for element in self.source:
-                    self.replay.append(element * self.amplitude)
-            self.replay_index = 0
-        if(self.replay_index < len(self.replay)):
-            val = self.replay[self.replay_index]
-            self.replay_index += 1
-            return val
-        else:
+        sig = 0.0
+        if len(self.generators) == len(self.exhausted_generators):
             raise StopIteration
+        for generator in self.generators:
+            if generator not in self.exhausted_generators:
+                try:
+                  sig += next(generator)
+                except StopIteration:
+                  self.exhausted_generators.append(generator)
+                  #print("Generator %s exhausted" % repr(generator))
+        sig /= len(self.generators)
+        return sig
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
     def release(self):
         pass
-
 

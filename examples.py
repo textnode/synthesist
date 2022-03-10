@@ -21,34 +21,37 @@ import shared
 import oscillators as osc
 import envelope as env
 from notes import striker
-from effects import phaser, echoer
+from effects import phaser, echo
 from noise import uniform_rand
-from util import minZeroer, fabser, adder, multiplier
+from util import minZeroer, fabser, combiner, multiplier
 
 #testing some combinations of oscillators, envelopes, echo and phasing
 
-control = osc.cosine(1, start_phase=math.pi / 2)
-cos = osc.cosine(200, start_phase = math.pi / 2)
-cos_dup = osc.cosine(200, start_phase = math.pi / 2)
-phase = phaser(cos, cos_dup, 0, control)
-strike = striker(phase, env.up(0.5), env.flat(1, 0.5), env.down(0.5))
-echo = echoer(strike, 1.5, 0.8, 3)
-shared.play(echo)
-
-sig_env = env.sine(4, duration=1.0)
-min_env = fabser(sig_env)
-sig = osc.cosine(441, envelope=min_env, envelope_pct=5.0)
-noise_env = env.cosine(2, duration=1.0)
-noise = uniform_rand(step_size=1, base_amplitude=1.0, envelope=noise_env, envelope_pct=5.0)
-add = adder(sig, noise)
-strike = striker(add, env.up(1.0), env.down_30_pct(1.0), env.down(1.0))
-shared.play(strike)
+cos = osc.cosine(441, end_phase=math.pi*2*441)
+shared.play(cos)
 
 strike = striker(osc.cosine(4410), env.up(duration=0.1), env.down_30_pct(duration=0.1), env.down(duration=2.0))
 shared.play(strike)
 
+control = osc.cosine(1, start_phase=math.pi / 2)
+cos = osc.cosine(441, start_phase = math.pi / 2)
+cos_dup = osc.cosine(441, start_phase = math.pi / 2)
+phase = phaser(cos, cos_dup, 0, control)
+shared.play_new(phase, max_duration=2)
 
-shared.play(striker(osc.cosine(441), env.up(0.1), env.down_30_pct(0.1), env.down(0.1)))
-shared.play(striker(osc.cosine(882), env.up(0.1), env.down_30_pct(0.1), env.down(0.1)))
-shared.play(striker(osc.cosine(1764), env.up(0.1), env.down_30_pct(0.1), env.down(0.1)))
+control = osc.cosine(1, start_phase=math.pi / 2)
+cos = osc.cosine(441, start_phase = math.pi / 2)
+cos_dup = osc.cosine(441, start_phase = math.pi / 2)
+phase = phaser(cos, cos_dup, 0, control)
+strike = striker(phase, env.up(duration=0.201), env.flat(duration=0.401), env.down(duration=0.201))
+echo = echo(strike, 0.9, 0.8, 5)
+shared.play_new(echo)
 
+sig_env = env.sine(4, duration=10.0)
+min_env = fabser(sig_env)
+sig = osc.cosine(441, envelope=min_env, envelope_pct=5.0)
+noise_env = env.cosine(2, duration=10.0)
+noise = uniform_rand(step_size=1, base_amplitude=1.0, envelope=noise_env, envelope_pct=5.0)
+add = combiner(sig, noise)
+strike = striker(add, env.up(3.0), env.down_30_pct(5.0), env.down(2.0))
+shared.play(strike)
