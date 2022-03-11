@@ -49,24 +49,27 @@ class stepper(Generator):
 
 
 class uniform_rand(stepper):
-    random.seed(shared.seed)
-    uniform_rands = []
-    for _ in range(shared.sample_rate):
-        rand = random.uniform(-1.0, 1.0)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
-        uniform_rands.append(rand)
+    def __init__(self, step_size=10, base_amplitude=1.0, envelope=None, envelope_pct=0.0):
+        super().__init__(step_size, base_amplitude, envelope, envelope_pct)
+
+        random.seed(shared.seed)
+        self.uniform_rands = []
+        for _ in range(shared.sample_rate):
+            rand = random.uniform(-1.0, 1.0)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
+            self.uniform_rands.append(rand)
 
     def send(self, ignored_arg):
         self.modulate()
-        val = uniform_rand.uniform_rands[self.position % len(uniform_rand.uniform_rands)] * self.amplitude
+        val = self.uniform_rands[self.position % len(self.uniform_rands)] * self.amplitude
         self.position += self.step_size
         return val
 

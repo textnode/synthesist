@@ -27,7 +27,7 @@ scaling = 32500.0
 frames_per_buffer = 1024
 seed = math.pi
 
-def plot(gen, max_duration=sample_rate * 10, title=None):
+def plot(gen, max_duration=4, title=None):
     # max_duration is here to save me from the easy mistake of passing in an infinite generator.
     audio = []
     for sig in itertools.islice(gen, 0, int(max_duration * sample_rate)):
@@ -38,7 +38,7 @@ def plot(gen, max_duration=sample_rate * 10, title=None):
     plt.show()
 
 
-def play(gen, max_duration=sample_rate * 10):
+def play(gen, max_duration=4):
     # max_duration is here to save me from the easy mistake of passing in an infinite generator.
     audio = array('i')
     for samp in itertools.islice(gen, 0, int(max_duration * sample_rate)):

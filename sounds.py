@@ -19,17 +19,16 @@ import math
 
 import shared
 import oscillators as osc
-import envelope as env
-from notes import striker, presser
-from effects import phaser, echoer
-from noise import uniform_rand
-from util import minZeroer, fabser, adder, multiplier
+import finite_envelope as f_env
+import infinite_envelope as i_env
+from notes import presser
+from effects import phaser
 
 def phased(note_freq, speed=1):
     control = osc.sine(speed)
     cos = osc.cosine(note_freq)
     cos_dup = osc.cosine(note_freq)
     phase = phaser(cos, cos_dup, 0, control)
-    return presser(phase, env.up(duration=0.1), env.flat(duration=0.5), env.flat(), env.down(duration=0.2))
+    return presser(phase, f_env.up(duration=0.1), f_env.flat(duration=0.5), i_env.flat(), f_env.down(duration=0.2))
 
 

@@ -24,7 +24,7 @@ class oscillator(Generator):
 
     def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None, envelope_pct=0.0):
         self.base_freq = base_freq
-        self.freq = self.base_freq
+        self.current_freq = self.base_freq
         self.base_amplitude = base_amplitude
         self.current_phase = start_phase
         self.end_phase = end_phase
@@ -42,8 +42,8 @@ class oscillator(Generator):
 
     def modulate(self):
         if self.freq_modulator != None:
-            self.freq = self.base_freq + (self.base_freq * self.freq_modulation_pct / 100.0 * next(self.freq_modulator))
-            self.gap = (math.pi * 2 * self.freq) / shared.sample_rate
+            self.current_freq = self.base_freq + (self.base_freq * self.freq_modulation_pct / 100.0 * next(self.freq_modulator))
+            self.gap = (math.pi * 2 * self.current_freq) / shared.sample_rate
         if self.envelope != None:
             self.amplitude = self.base_amplitude * ((self.base_amplitude * (100.0 - self.envelope_pct) / 100.0) * next(self.envelope))
 
@@ -110,11 +110,11 @@ class reverse_sawtooth(oscillator):
         return val
 
 class constant(Generator):
-    def __init__(self, base_amplitude=1.0, time=None):
+    def __init__(self, duration=None, amplitude=1.0):
         self.samples = None
-        if time != None:
-            self.samples = int(time * shared.sample_rate)
-        self.base_amplitude = base_amplitude
+        if duration != None:
+            self.samples = int(duration * shared.sample_rate)
+        self.amplitude = amplitude
 
     def send(self, ignored_arg):
         if(self.samples != None):
@@ -123,12 +123,12 @@ class constant(Generator):
                 #print("%s Samples remaining: %d" % (repr(self), self.samples))
             else:
                 raise StopIteration
-        return self.base_amplitude
+        return self.amplitude
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
 class silence(constant):
-    def __init__(self, time=None):
-        super().__init__(base_amplitude=0.0, time=time)
+    def __init__(self, duration):
+        super().__init__(duration=duration, amplitude=0.0)
 

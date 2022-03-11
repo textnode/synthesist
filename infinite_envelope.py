@@ -17,92 +17,75 @@
 from collections.abc import Generator
 import math
 
+import oscillators as osc
 
-class combiner(Generator):
-    #returns mean of 2 input values
-    def __init__(self, gen1, gen2):
-        self.gen1 = gen1
-        self.gen2 = gen2
+class sine(Generator):
+    def __init__(self, freq, start_phase=0.0):
+        self.gen = osc.sine(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
-        return((next(self.gen1) + next(self.gen2)) / 2.0)
+        return (next(self.gen) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class minZeroer(Generator):
-    #output never goes below zero
-    def __init__(self, gen):
-        self.gen = gen
+class cosine(Generator):
+    def __init__(self, freq, start_phase=0.0):
+        self.gen = osc.cosine(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
-        return(max(0.0, next(self.gen)))
+        return (next(self.gen) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class fabser(Generator):
-    #outputs under zero are reflected to positive values
-    def __init__(self, gen):
-        self.gen = gen
+class square(Generator):
+    def __init__(self, freq, start_phase=0.0):
+        self.gen = osc.square(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
-        return(math.fabs(next(self.gen)))
+        return (next(self.gen) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class inverter(Generator):
-    def __init__(self, gen):
-        self.gen = gen
+class triangle(Generator):
+    def __init__(self, freq, start_phase=0.0):
+        self.gen = osc.triangle(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
-        return(-1.0 * next(self.gen))
+        return (next(self.gen) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class scaler(Generator):
-    def __init__(self, gen, scaling_factor):
-        self.gen = gen
-        self.scaling_factor = scaling_factor
+class sawtooth(Generator):
+    def __init__(self, freq, start_phase=0.0):
+        self.gen = osc.sawtooth(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
-        return(next(self.gen) * self.scaling_factor)
+        return (next(self.gen) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class multiplier(Generator):
-    def __init__(self, gen1, gen2):
-        self.gen1 = gen1
-        self.gen2 = gen2
+class reverse_sawtooth(Generator):
+    def __init__(self, freq, start_phase=0.0):
+        self.gen = osc.reverse_sawtooth(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
-        return(next(self.gen1) * next(self.gen2))
+        return (next(self.gen) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class offsetter(Generator):
-    def __init__(self, gen, offset):
-        self.gen = gen
-        self.offset = offset
+class flat(Generator):
+    def __init__(self, amplitude=1.0):
+        self.gen = osc.constant(amplitude=amplitude)
 
     def send(self, ignored_arg):
-        return(next(self.gen) + self.offset)
+        return ((next(self.gen)) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class limiter(Generator):
-    def __init__(self, gen, upper_limit=1.0, lower_limit=-1.0):
-        self.gen = gen
-        self.upper_limit = upper_limit
-        self.lower_limit = lower_limit
-
-    def send(self, ignored_arg):
-        return min(max(next(self.gen), self.lower_limit), self.upper_limit)
-
-    def throw(self, type=None, value=None, traceback=None):
-        raise StopIteration

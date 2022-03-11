@@ -24,9 +24,6 @@ from pygame import midi
 import pyaudio
 
 import shared
-import oscillators as osc
-import notes
-from envelope import up, flat, down, down_30_pct
 import sounds
 
 #This class is a work-in-progress.
