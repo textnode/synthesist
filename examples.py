@@ -27,6 +27,15 @@ from util import minZeroer, fabser, combiner, multiplier, offsetter, scaler
 
 #testing some combinations of oscillators, envelopes, echo and phasing
 
+saw = osc.sawtooth(441, end_phase=math.pi*2*4)
+shared.plot(saw, title="Sawtooth")
+
+rev_saw = osc.reverse_sawtooth(441, end_phase=math.pi*2*4)
+shared.plot(rev_saw, title="Reverse Sawtooth")
+
+tri = osc.triangle(441, end_phase=math.pi*2*4)
+shared.plot(tri, title="Triangle")
+
 cos = osc.cosine(441, end_phase=math.pi*2*441)
 shared.play(cos)
 

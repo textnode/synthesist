@@ -30,7 +30,7 @@ seed = math.pi
 def plot(gen, max_duration=sample_rate * 10, title=None):
     # max_duration is here to save me from the easy mistake of passing in an infinite generator.
     audio = []
-    for sig in itertools.islice(gen, 0, max_duration * sample_rate):
+    for sig in itertools.islice(gen, 0, int(max_duration * sample_rate)):
         audio.append(sig)
     plt.plot(audio)
     if title != None:
@@ -41,7 +41,7 @@ def plot(gen, max_duration=sample_rate * 10, title=None):
 def play(gen, max_duration=sample_rate * 10):
     # max_duration is here to save me from the easy mistake of passing in an infinite generator.
     audio = array('i')
-    for samp in itertools.islice(gen, 0, max_duration * sample_rate):
+    for samp in itertools.islice(gen, 0, int(max_duration * sample_rate)):
         #print("sig: %f" % samp)
         audio.append(int( (samp) * scaling))
     packed = struct.pack("<%si" % len(audio), *audio)

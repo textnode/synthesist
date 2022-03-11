@@ -79,12 +79,24 @@ class square(oscillator):
         self.current_phase = self.current_phase + self.gap
         return val
 
+class triangle(oscillator):
+    def send(self, ignored_arg):
+        super().exhausted()
+        self.modulate()
+        ph = self.current_phase % (2 * math.pi)
+        if ph < math.pi:
+            val = (((ph * self.amplitude) / math.pi) * 2) - 1
+        else:
+            val = ((((2 * math.pi) - ph) / math.pi) * 2) - 1
+        self.current_phase = self.current_phase + self.gap
+        return val
+
 class sawtooth(oscillator):
     def send(self, ignored_arg):
         super().exhausted()
         self.modulate()
-        ph = self.current_phase % math.pi
-        val = ((2.0 * (ph / math.pi)) - 1.0) * self.amplitude if ph < math.pi else ((2.0 * (1.0 - (ph / math.pi))) - 1.0) * self.amplitude
+        ph = self.current_phase % (2 * math.pi)
+        val = ((ph * self.amplitude) / math.pi) - 1
         self.current_phase = self.current_phase + self.gap
         return val
 
@@ -92,8 +104,8 @@ class reverse_sawtooth(oscillator):
     def send(self, ignored_arg):
         super().exhausted()
         self.modulate()
-        ph = self.current_phase % math.pi
-        val = (2.0 * (1 - (ph / math.pi)) - 1.0) * self.amplitude if ph < math.pi else (2.0 * ((ph / math.pi) - 1.0) - 1.0) * self.amplitude
+        ph = self.current_phase % (2 * math.pi)
+        val = (((2 * math.pi) - ph) / math.pi) - 1
         self.current_phase = self.current_phase + self.gap
         return val
 

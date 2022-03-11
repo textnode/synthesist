@@ -32,43 +32,43 @@ class combiner(Generator):
 
 class minZeroer(Generator):
     #output never goes below zero
-    def __init__(self, gen1):
-        self.gen1 = gen1
+    def __init__(self, gen):
+        self.gen = gen
 
     def send(self, ignored_arg):
-        return(max(0.0, next(self.gen1)))
+        return(max(0.0, next(self.gen)))
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
 class fabser(Generator):
     #outputs under zero are reflected to positive values
-    def __init__(self, gen1):
-        self.gen1 = gen1
+    def __init__(self, gen):
+        self.gen = gen
 
     def send(self, ignored_arg):
-        return(math.fabs(next(self.gen1)))
+        return(math.fabs(next(self.gen)))
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
 class inverter(Generator):
-    def __init__(self, gen1):
-        self.gen1 = gen1
+    def __init__(self, gen):
+        self.gen = gen
 
     def send(self, ignored_arg):
-        return(-1.0 * next(self.gen1))
+        return(-1.0 * next(self.gen))
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
 class scaler(Generator):
-    def __init__(self, gen1, scaling_factor):
-        self.gen1 = gen1
+    def __init__(self, gen, scaling_factor):
+        self.gen = gen
         self.scaling_factor = scaling_factor
 
     def send(self, ignored_arg):
-        return(next(self.gen1) * self.scaling_factor)
+        return(next(self.gen) * self.scaling_factor)
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
@@ -85,13 +85,24 @@ class multiplier(Generator):
         raise StopIteration
 
 class offsetter(Generator):
-    def __init__(self, gen1, offset):
-        self.gen1 = gen1
+    def __init__(self, gen, offset):
+        self.gen = gen
         self.offset = offset
 
     def send(self, ignored_arg):
-        return(next(self.gen1) + self.offset)
+        return(next(self.gen) + self.offset)
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
+class limiter(Generator):
+    def __init__(self, gen, upper=1.0, lower=-1.0):
+        self.gen = gen
+        self.upper = upper
+        self.lower = lower
+
+    def send(self, ignored_arg):
+        return min(max(next(self.gen), self.lower), self.upper)
+
+    def throw(self, type=None, value=None, traceback=None):
+        raise StopIteration
