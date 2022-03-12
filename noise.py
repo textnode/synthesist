@@ -22,12 +22,11 @@ import shared
 
 class stepper(Generator):
 
-    def __init__(self, step_size=10, base_amplitude=1.0, envelope=None, envelope_pct=0.0):
+    def __init__(self, step_size=10, base_amplitude=1.0, envelope=None):
         self.position = 0
         self.step_size = step_size
         self.base_amplitude = base_amplitude
         self.envelope = envelope
-        self.envelope_pct = envelope_pct
         self.amplitude = self.base_amplitude
 
     def modulate(self):
@@ -35,7 +34,7 @@ class stepper(Generator):
         if self.envelope != None:
             #print("has envelope")
             try:
-                self.amplitude = self.base_amplitude * ((self.base_amplitude * self.envelope_pct / 100.0) * ((next(self.envelope))))
+                self.amplitude = self.base_amplitude * next(self.envelope)
             except StopIteration:
                 #print("stop iteration")
                 raise
@@ -49,8 +48,8 @@ class stepper(Generator):
 
 
 class uniform_rand(stepper):
-    def __init__(self, step_size=10, base_amplitude=1.0, envelope=None, envelope_pct=0.0):
-        super().__init__(step_size, base_amplitude, envelope, envelope_pct)
+    def __init__(self, step_size=10, base_amplitude=1.0, envelope=None):
+        super().__init__(step_size, base_amplitude, envelope)
 
         random.seed(shared.seed)
         self.uniform_rands = []

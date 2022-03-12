@@ -40,9 +40,9 @@ shared.play(echo)
 
 sig_env = i_env.sine(4)
 min_env = util.fabser(sig_env)
-sig = osc.cosine(441, envelope=min_env, envelope_pct=5.0)
+sig = osc.cosine(441, envelope=min_env)
 noise_env = i_env.cosine(2)
-noise = noise.uniform_rand(step_size=1, envelope=noise_env, envelope_pct=5.0)
+noise = noise.uniform_rand(step_size=1, envelope=noise_env)
 add = util.combiner(sig, noise)
 strike = notes.striker(add, f_env.up(3.0), f_env.down_30_pct(5.0), f_env.down(2.0))
 shared.play(strike)
@@ -73,7 +73,7 @@ shared.plot(i_env.sawtooth(441), max_duration=0.01, title="Infinite sawtooth 441
 shared.plot(i_env.reverse_sawtooth(441), max_duration=0.01, title="Infinite reverse-sawtooth 441Hz envelope, terminated at 0.01 seconds")
 shared.plot(i_env.flat(1.0), max_duration=0.01, title="Infinite flat 1.0 envelope, terminated at 0.01 seconds")
 
-shared.plot(noise.uniform_rand(step_size=1), max_duration=0.01, title="Infinite random noise, terminated at 0.01 seconds")
+#shared.plot(noise.uniform_rand(step_size=1), max_duration=0.01, title="Infinite random noise, terminated at 0.01 seconds")
 
 #notes.presser()
 shared.plot(notes.striker(osc.sine(441), f_env.up(1.0), f_env.flat(1.0), f_env.down(1.0)), title="Striker note, 441Hz Sine with envelopes: up 1 second, flat 1 second, down 1 second")

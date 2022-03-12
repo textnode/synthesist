@@ -17,6 +17,8 @@
 from collections.abc import Generator
 import math
 
+def amplitude_from_velocity(velocity):
+    return (1.0/127) * velocity
 
 class combiner(Generator):
     #returns mean of 2 input values

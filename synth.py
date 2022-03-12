@@ -23,8 +23,10 @@ from array import array
 from pygame import midi
 import pyaudio
 
+import util
 import shared
 import sounds
+import factories
 
 #This class is a work-in-progress.
 #My machine is too slow to supply buffers quick enough to support glitch-free audio output - even with no notes playing!
@@ -36,6 +38,7 @@ class sequencer():
         self.mutex = threading.Lock()
         self.releasable = {}
         self.autonomous = []
+        self.sound_factory = factories.sound_factory()
 
     def run_keyboard(self):
         print("Running keyboard: %s" % threading.get_native_id())
@@ -65,12 +68,18 @@ class sequencer():
                     print("Midi event: %s, %s, %s, %s, %s" % (status, note, velocity, other, after))
                     with self.mutex:
                         if status==0x80:
-                            #print("Midi release")
+                            #print("Midi chan 1 release")
                             if(note in self.releasable.keys()):
                                 self.releasable[note].release()
                         elif status==0x90:
-                            #print("Midi press")
-                            self.releasable[note] = sounds.phased(midi.midi_to_frequency(note), speed=velocity / 50.0)
+                            #print("Midi chan 1 press")
+                            self.releasable[note] = self.sound_factory.produce(note, velocity)
+                        elif status==0x99:
+                            #print("Midi chan 10 press")
+                            self.sound_factory.retool(note)
+                        elif status==0xB0 and note==0x01:
+                            #print("Midi chan 1 control/mode, mod wheel")
+                            self.sound_factory.remodulate(velocity)
 
     def run_player(self):
         print("Running player: %s" % threading.get_native_id())
