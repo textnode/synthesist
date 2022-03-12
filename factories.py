@@ -1,5 +1,5 @@
 # Copyright 2022 Darren Elwood <darren@textnode.com> http://www.textnode.com @textnode
-#
+
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at 
@@ -23,8 +23,11 @@ import sounds
 class sound_factory():
     def __init__(self):
         self.tooling = sounds.pure_sine
-        self.envelope = i_env.flat
+        self.envelope = None
         self.envelope_freq = 0.0
+        self.vibrato = None
+        self.vibrato_freq = 0.0
+        self.vibrato_depth = 0.0
 
     def retool(self, note):
         print("Retooling factory")
@@ -47,15 +50,46 @@ class sound_factory():
         else:
             self.tooling = sounds.pure_sine
 
-    def remodulate(self, value):
-        print("Remodulating factory")
+    def set_envelope_frequency(self, value):
+        print("Setting envelope frequency")
         if value > 10:
             self.envelope = i_env.cosine
-            self.envelope_freq = (value - 9.0) / 30.0
+            self.envelope_freq = (value - 9.0) / 10.0
         else:
-            self.envelope = i_env.flat
+            self.envelope = None
             self.envelope_freq = 0.0
         print("Envelope frequency: %fHz" % self.envelope_freq)
 
+    def set_vibrato_frequency(self, value):
+        print("Setting vibrato frequency")
+        if value > 10:
+            self.vibrato_freq = (value - 9.0) / 10.0
+        else:
+            self.vibrato_freq = 0.0
+        self.apply_vibrato_settings()
+        print("Vibrato frequency: %fHz" % self.vibrato_freq)
+
+    def set_vibrato_depth(self, value):
+        print("Setting vibrato depth")
+        if value > 10:
+            self.vibrato_depth = (value - 9.0) / 10.0
+        else:
+            self.vibrato_depth = 0.0
+        self.apply_vibrato_settings()
+        print("Vibrato depth: %f" % self.vibrato_depth)
+
+    def apply_vibrato_settings(self):
+        if self.vibrato_depth > 0.0 and self.vibrato_freq > 0.0:
+            self.vibrato = i_env.cosine
+        else:
+            self.vibrato = None
+
     def produce(self, note, velocity):
-        return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), envelope=self.envelope(self.envelope_freq))
+        if self.envelope != None and self.vibrato != None:
+            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), envelope=self.envelope(self.envelope_freq), freq_modulator=self.vibrato(self.vibrato_freq), freq_modulation_pct=self.vibrato_depth)
+        elif self.envelope != None:
+            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), envelope=self.envelope(self.envelope_freq))
+        elif self.vibrato != None:
+            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), freq_modulator=self.vibrato(self.vibrato_freq), freq_modulation_pct=self.vibrato_depth)
+        else:
+            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity))

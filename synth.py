@@ -77,9 +77,15 @@ class sequencer():
                         elif status==0x99:
                             #print("Midi chan 10 press")
                             self.sound_factory.retool(note)
-                        elif status==0xB0 and note==0x01:
-                            #print("Midi chan 1 control/mode, mod wheel")
-                            self.sound_factory.remodulate(velocity)
+                        elif status==0xB0 and note==0x4A:
+                            #print("Midi chan 1 control/mode, knob 1 (brightness)")
+                            self.sound_factory.set_envelope_frequency(velocity)
+                        elif status==0xB0 and note==0x4C:
+                            #print("Midi chan 1 control/mode, knob 3 (vibrato rate)")
+                            self.sound_factory.set_vibrato_frequency(velocity)
+                        elif status==0xB0 and note==0x4D:
+                            #print("Midi chan 1 control/mode, knob 4 (vibrato depth)")
+                            self.sound_factory.set_vibrato_depth(velocity)
 
     def run_player(self):
         print("Running player: %s" % threading.get_native_id())
