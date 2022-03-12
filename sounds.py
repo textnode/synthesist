@@ -1,4 +1,4 @@
-# Copyright 10022 Darren Elwood <darren@textnode.com> http://www.textnode.com @textnode
+# Copyright 20.01 Darren Elwood <darren@textnode.com> http://www.textnode.com @textnode
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Version 0.1
+# Version 0.01
 
 import sys
 import math
@@ -26,25 +26,25 @@ from effects import phaser
 
 def pure_sine(note_freq, amplitude, envelope=None, freq_modulator=None, freq_modulation_pct=None):
     cos = osc.cosine(note_freq, base_amplitude=amplitude, freq_modulator=freq_modulator, freq_modulation_pct=freq_modulation_pct, envelope=envelope)
-    return presser(cos, f_env.up(duration=0.1), f_env.flat(duration=0.1), i_env.flat(), f_env.down(duration=0.2))
+    return presser(cos, f_env.up(duration=0.01), f_env.flat(duration=0.01), i_env.flat(), f_env.down(duration=0.01))
 
 def pure_square(note_freq, amplitude, envelope=None, freq_modulator=None, freq_modulation_pct=None):
     sqr = osc.square(note_freq, base_amplitude=amplitude, freq_modulator=freq_modulator, freq_modulation_pct=freq_modulation_pct, envelope=envelope)
-    return presser(sqr, f_env.up(duration=0.1), f_env.flat(duration=0.1), i_env.flat(), f_env.down(duration=0.2))
+    return presser(sqr, f_env.up(duration=0.01), f_env.flat(duration=0.01), i_env.flat(), f_env.down(duration=0.01))
 
 def pure_triangle(note_freq, amplitude, envelope=None, freq_modulator=None, freq_modulation_pct=None):
     tri = osc.triangle(note_freq, base_amplitude=amplitude, freq_modulator=freq_modulator, freq_modulation_pct=freq_modulation_pct, envelope=envelope)
-    return presser(tri, f_env.up(duration=0.1), f_env.flat(duration=0.1), i_env.flat(), f_env.down(duration=0.2))
+    return presser(tri, f_env.up(duration=0.01), f_env.flat(duration=0.01), i_env.flat(), f_env.down(duration=0.01))
 
 def pure_sawtooth(note_freq, amplitude, envelope=None, freq_modulator=None, freq_modulation_pct=None):
     saw = osc.sawtooth(note_freq, base_amplitude=amplitude, freq_modulator=freq_modulator, freq_modulation_pct=freq_modulation_pct, envelope=envelope)
-    return presser(saw, f_env.up(duration=0.1), f_env.flat(duration=0.1), i_env.flat(), f_env.down(duration=0.2))
+    return presser(saw, f_env.up(duration=0.01), f_env.flat(duration=0.01), i_env.flat(), f_env.down(duration=0.01))
 
 def pure_phased(note_freq, amplitude, envelope=None, freq_modulator=None, freq_modulation_pct=None, speed=1):
     control = osc.sine(speed)
     cos = osc.cosine(note_freq, freq_modulator, freq_modulation_pct, envelope=envelope)
     cos_dup = osc.cosine(note_freq, freq_modulator, freq_modulation_pct, envelope=envelope)
     phase = phaser(cos, cos_dup, 0, control)
-    return presser(phase, f_env.up(duration=0.1), f_env.flat(duration=0.1), i_env.flat(), f_env.down(duration=0.2))
+    return presser(phase, f_env.up(duration=0.01), f_env.flat(duration=0.01), i_env.flat(), f_env.down(duration=0.01))
 
 

@@ -23,6 +23,7 @@ import oscillators as osc
 
 class phaser(Generator):
     def __init__(self, inp, input_to_be_delayed, initial_delay, control):
+        super().__init__()
         self.inp = inp
         self.input_to_be_delayed = input_to_be_delayed
         self.shift = initial_delay
@@ -48,6 +49,7 @@ class phaser(Generator):
 
 class echo(Generator):
     def __init__(self, generator, delay, decay, repeats):
+        super().__init__()
         current_delay = 0
         current_amplitude = 1.0
         copies = itertools.tee(generator, repeats+1)

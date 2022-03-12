@@ -23,6 +23,7 @@ import shared
 class stepper(Generator):
 
     def __init__(self, step_size=10, base_amplitude=1.0, envelope=None):
+        super().__init__()
         self.position = 0
         self.step_size = step_size
         self.base_amplitude = base_amplitude

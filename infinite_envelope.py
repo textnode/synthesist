@@ -21,6 +21,7 @@ import oscillators as osc
 
 class sine(Generator):
     def __init__(self, freq, start_phase=0.0):
+        super().__init__()
         self.gen = osc.sine(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
@@ -31,6 +32,7 @@ class sine(Generator):
 
 class cosine(Generator):
     def __init__(self, freq, start_phase=0.0):
+        super().__init__()
         self.gen = osc.cosine(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
@@ -41,6 +43,7 @@ class cosine(Generator):
 
 class square(Generator):
     def __init__(self, freq, start_phase=0.0):
+        super().__init__()
         self.gen = osc.square(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
@@ -51,6 +54,7 @@ class square(Generator):
 
 class triangle(Generator):
     def __init__(self, freq, start_phase=0.0):
+        super().__init__()
         self.gen = osc.triangle(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
@@ -61,6 +65,7 @@ class triangle(Generator):
 
 class sawtooth(Generator):
     def __init__(self, freq, start_phase=0.0):
+        super().__init__()
         self.gen = osc.sawtooth(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
@@ -71,6 +76,7 @@ class sawtooth(Generator):
 
 class reverse_sawtooth(Generator):
     def __init__(self, freq, start_phase=0.0):
+        super().__init__()
         self.gen = osc.reverse_sawtooth(freq, start_phase=start_phase)
 
     def send(self, ignored_arg):
@@ -81,6 +87,7 @@ class reverse_sawtooth(Generator):
 
 class flat(Generator):
     def __init__(self, amplitude=1.0):
+        super().__init__()
         self.gen = osc.constant(amplitude=amplitude)
 
     def send(self, ignored_arg):

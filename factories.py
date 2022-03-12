@@ -49,6 +49,7 @@ class sound_factory():
             self.tooling = sounds.pure_sawtooth
         else:
             self.tooling = sounds.pure_sine
+        print("Tooling is now: %s" % repr(self.tooling))
 
     def set_envelope_frequency(self, value):
         print("Setting envelope frequency")

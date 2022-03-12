@@ -21,6 +21,7 @@ import shared
 
 class presser(Generator):
     def __init__(self, gen, attack_gen, decay_gen, sustain_gen, release_gen):
+        super().__init__()
         self.gen = gen
         self.attack_gen = attack_gen
         self.last_attack = 1.0
@@ -34,20 +35,24 @@ class presser(Generator):
     def send(self, ignored_arg):
         try:
             self.last_attack = next(self.attack_gen)
+            #print("Attack phase")
             return self.last_attack * next(self.gen)
         except StopIteration:
             pass
 
         try:
             self.last_decay = next(self.decay_gen)
+            print("Decay phase")
             return self.last_attack * self.last_decay * next(self.gen)
         except StopIteration:
             pass
 
         if not self.released:
             self.last_sustain = next(self.sustain_gen)
+            print("Sustain phase")
             return self.last_attack * self.last_decay * self.last_sustain * next(self.gen)
 
+        print("Release phase")
         return self.last_attack * self.last_decay * self.last_sustain * next(self.release_gen) * next(self.gen)
 
     def throw(self, type=None, value=None, traceback=None):
@@ -59,6 +64,7 @@ class presser(Generator):
 
 class striker(Generator):
     def __init__(self, gen, attack_gen, decay_gen, release_gen):
+        super().__init__()
         self.gen = gen
         self.attack_gen = attack_gen
         self.decay_gen = decay_gen

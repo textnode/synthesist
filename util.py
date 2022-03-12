@@ -23,6 +23,7 @@ def amplitude_from_velocity(velocity):
 class combiner(Generator):
     #returns mean of 2 input values
     def __init__(self, gen1, gen2):
+        super().__init__()
         self.gen1 = gen1
         self.gen2 = gen2
 
@@ -35,6 +36,7 @@ class combiner(Generator):
 class minZeroer(Generator):
     #output never goes below zero
     def __init__(self, gen):
+        super().__init__()
         self.gen = gen
 
     def send(self, ignored_arg):
@@ -46,6 +48,7 @@ class minZeroer(Generator):
 class fabser(Generator):
     #outputs under zero are reflected to positive values
     def __init__(self, gen):
+        super().__init__()
         self.gen = gen
 
     def send(self, ignored_arg):
@@ -56,6 +59,7 @@ class fabser(Generator):
 
 class inverter(Generator):
     def __init__(self, gen):
+        super().__init__()
         self.gen = gen
 
     def send(self, ignored_arg):
@@ -66,6 +70,7 @@ class inverter(Generator):
 
 class scaler(Generator):
     def __init__(self, gen, scaling_factor):
+        super().__init__()
         self.gen = gen
         self.scaling_factor = scaling_factor
 
@@ -77,6 +82,7 @@ class scaler(Generator):
 
 class multiplier(Generator):
     def __init__(self, gen1, gen2):
+        super().__init__()
         self.gen1 = gen1
         self.gen2 = gen2
 
@@ -88,6 +94,7 @@ class multiplier(Generator):
 
 class offsetter(Generator):
     def __init__(self, gen, offset):
+        super().__init__()
         self.gen = gen
         self.offset = offset
 
@@ -99,6 +106,7 @@ class offsetter(Generator):
 
 class limiter(Generator):
     def __init__(self, gen, upper_limit=1.0, lower_limit=-1.0):
+        super().__init__()
         self.gen = gen
         self.upper_limit = upper_limit
         self.lower_limit = lower_limit

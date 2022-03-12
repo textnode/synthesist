@@ -68,23 +68,25 @@ class sequencer():
                     print("Midi event: %s, %s, %s, %s, %s" % (status, note, velocity, other, after))
                     with self.mutex:
                         if status==0x80:
-                            #print("Midi chan 1 release")
+                            print("Midi chan 1 release")
                             if(note in self.releasable.keys()):
+                                print("Releasing note: %d" % note)
                                 self.releasable[note].release()
                         elif status==0x90:
-                            #print("Midi chan 1 press")
+                            print("Midi chan 1 press")
+                            print("Adding note: %d" % note)
                             self.releasable[note] = self.sound_factory.produce(note, velocity)
                         elif status==0x99:
-                            #print("Midi chan 10 press")
+                            print("Midi chan 10 press")
                             self.sound_factory.retool(note)
                         elif status==0xB0 and note==0x4A:
-                            #print("Midi chan 1 control/mode, knob 1 (brightness)")
+                            print("Midi chan 1 control/mode, knob 1 (brightness)")
                             self.sound_factory.set_envelope_frequency(velocity)
                         elif status==0xB0 and note==0x4C:
-                            #print("Midi chan 1 control/mode, knob 3 (vibrato rate)")
+                            print("Midi chan 1 control/mode, knob 3 (vibrato rate)")
                             self.sound_factory.set_vibrato_frequency(velocity)
                         elif status==0xB0 and note==0x4D:
-                            #print("Midi chan 1 control/mode, knob 4 (vibrato depth)")
+                            print("Midi chan 1 control/mode, knob 4 (vibrato depth)")
                             self.sound_factory.set_vibrato_depth(velocity)
 
     def run_player(self):
