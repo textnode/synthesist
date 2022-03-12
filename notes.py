@@ -42,17 +42,17 @@ class presser(Generator):
 
         try:
             self.last_decay = next(self.decay_gen)
-            print("Decay phase")
+            #print("Decay phase")
             return self.last_attack * self.last_decay * next(self.gen)
         except StopIteration:
             pass
 
         if not self.released:
             self.last_sustain = next(self.sustain_gen)
-            print("Sustain phase")
+            #print("Sustain phase")
             return self.last_attack * self.last_decay * self.last_sustain * next(self.gen)
 
-        print("Release phase")
+        #print("Release phase")
         return self.last_attack * self.last_decay * self.last_sustain * next(self.release_gen) * next(self.gen)
 
     def throw(self, type=None, value=None, traceback=None):
