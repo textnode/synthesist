@@ -43,7 +43,7 @@ min_env = util.fabser(sig_env)
 sig = osc.cosine(441)
 noise_env = i_env.cosine(2)
 noi = noise.uniform_rand(step_size=1)
-add = util.combiner(sig, noi)
+add = util.combine2(sig, noi)
 strike = notes.striker(add, f_env.up(3.0), f_env.down_30_pct(5.0), f_env.down(2.0))
 shared.play(strike)
 
@@ -78,14 +78,14 @@ shared.plot(noise.uniform_rand(step_size=1), max_duration=0.01, title="Infinite 
 #notes.presser()
 shared.plot(notes.striker(osc.sine(441), f_env.up(1.0), f_env.flat(1.0), f_env.down(1.0)), title="Striker note, 441Hz Sine with envelopes: up 1 second, flat 1 second, down 1 second")
 
-shared.plot(util.combiner(osc.sine(441), osc.square(220)), max_duration=0.01, title="Sine 441Hz and square 220Hz combined, terminated at 0.01 seconds")
+shared.plot(util.combine2(osc.sine(441), osc.square(220)), max_duration=0.01, title="Sine 441Hz and square 220Hz combined, terminated at 0.01 seconds")
 shared.plot(util.minZeroer(osc.sine(441)), max_duration=0.01, title="Sine 441Hz min-zeroed, terminated at 0.01 seconds")
 shared.plot(util.fabser(osc.sine(441)), max_duration=0.01, title="Sine 441Hz fabsd, terminated at 0.01 seconds")
 shared.plot(util.inverter(osc.sine(441)), max_duration=0.01, title="Sine 441Hz inverted, terminated at 0.01 seconds")
 shared.plot(util.scaler(osc.sine(441), scaling_factor=2.0), max_duration=0.01, title="Sine 441Hz scale by factor of 2.0, terminated at 0.01 seconds")
 shared.plot(util.multiplier(osc.sine(441), osc.square(220)), max_duration=0.01, title="Sine 441Hz multiplied by square 220Hz, terminated at 0.01 seconds")
 shared.plot(util.offsetter(osc.sine(441), offset=1.0), max_duration=0.01, title="Sine 441Hz offset by 1.0, terminated at 0.01 seconds")
-shared.plot(util.limiter(osc.sine(441, base_amplitude=2.0), upper_limit=1.5, lower_limit=-0.7), max_duration=0.01, title="Sine 441Hz with amplitude 2.0 limited to upper limit 1.5 and lower limit -0.7, terminated at 0.01 seconds")
+shared.plot(util.limiter(util.scaler(osc.sine(441), scaling_factor=2.0), upper_limit=1.5, lower_limit=-0.7), max_duration=0.01, title="Sine 441Hz with amplitude 2.0 limited to upper limit 1.5 and lower limit -0.7, terminated at 0.01 seconds")
 
 
 

@@ -22,7 +22,7 @@ import shared
 def amplitude_from_velocity(velocity):
     return (1.0/127) * velocity
 
-class combiner(Generator):
+class combine2(Generator):
     #returns mean of 2 input values
     def __init__(self, gen1, gen2):
         super().__init__()
@@ -35,7 +35,7 @@ class combiner(Generator):
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
 
-class combiner(Generator):
+class combine3(Generator):
     #returns mean of 3 input values
     def __init__(self, gen1, gen2, gen3):
         super().__init__()

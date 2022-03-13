@@ -39,6 +39,9 @@ class sequencer():
         self.releasable = {}
         self.autonomous = []
         self.sound_factory = factories.sound_factory()
+        self.pads_for_retooling = [40,41,42,43]
+        self.pads_for_percussion = [36,37,38,39]
+
 
     def run_keyboard(self):
         print("Running keyboard: %s" % threading.get_native_id())
@@ -76,9 +79,12 @@ class sequencer():
                             print("Midi chan 1 press")
                             print("Adding note: %d" % note)
                             self.releasable[note] = self.sound_factory.produce(note, velocity)
-                        elif status==0x99:
-                            print("Midi chan 10 press")
+                        elif status==0x99 and note in self.pads_for_retooling:
+                            print("Midi chan 10 press - pad for retooling")
                             self.sound_factory.retool(note)
+                        elif status==0x99 and note in self.pads_for_percussion:
+                            print("Midi chan 10 press - pad for percussion")
+                            self.autonomous.append(sounds.cymbal())
                         elif status==0xB0 and note==0x4A:
                             print("Midi chan 1 control/mode, knob 1 (brightness)")
                             self.sound_factory.set_envelope_frequency(velocity)

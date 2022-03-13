@@ -22,12 +22,10 @@ import shared
 
 class stepper(Generator):
 
-    def __init__(self, step_size=10, base_amplitude=1.0):
+    def __init__(self, step_size=10):
         super().__init__()
         self.position = 0
         self.step_size = step_size
-        self.base_amplitude = base_amplitude
-        self.amplitude = self.base_amplitude
 
     @abstractmethod
     def send(self, ignored_arg):
@@ -38,8 +36,8 @@ class stepper(Generator):
 
 
 class uniform_rand(stepper):
-    def __init__(self, step_size=10, base_amplitude=1.0):
-        super().__init__(step_size, base_amplitude)
+    def __init__(self, step_size=10):
+        super().__init__(step_size)
 
         random.seed(shared.seed)
         self.uniform_rands = []
@@ -57,7 +55,7 @@ class uniform_rand(stepper):
             self.uniform_rands.append(rand)
 
     def send(self, ignored_arg):
-        val = self.uniform_rands[self.position % len(self.uniform_rands)] * self.amplitude
+        val = self.uniform_rands[self.position % len(self.uniform_rands)]
         self.position += self.step_size
         return val
 

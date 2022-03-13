@@ -34,18 +34,10 @@ class sound_factory():
         if note == 40:
             self.tooling = sounds.pure_sine
         elif note == 41:
-            self.tooling = sounds.pure_square
+            self.tooling = sounds.pure_phased
         elif note == 42:
             self.tooling = sounds.pure_triangle
         elif note == 43:
-            self.tooling = sounds.pure_sawtooth
-        elif note == 36:
-            self.tooling = sounds.pure_phased
-        elif note == 37:
-            self.tooling = sounds.pure_square
-        elif note == 38:
-            self.tooling = sounds.pure_triangle
-        elif note == 39:
             self.tooling = sounds.pure_sawtooth
         else:
             self.tooling = sounds.pure_sine

@@ -22,17 +22,15 @@ import shared
 
 class oscillator(Generator):
 
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+    def __init__(self, base_freq, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
         super().__init__()
         print("Oscillator with base frequency: %fHz" % base_freq)
         self.base_freq = base_freq
         self.current_freq = self.base_freq
-        self.base_amplitude = base_amplitude
         self.current_phase = start_phase
         self.end_phase = end_phase
         self.freq_modulator = freq_modulator
         self.freq_modulation_pct = freq_modulation_pct
-        self.amplitude = self.base_amplitude
         self.gap = (math.pi * 2 * self.base_freq) / shared.sample_rate
 
     def exhausted(self):
@@ -54,68 +52,68 @@ class oscillator(Generator):
 
 
 class sine(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
+    def __init__(self, base_freq, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
         self.modulate()
-        val = math.sin(float(self.current_phase)) * self.amplitude
+        val = math.sin(float(self.current_phase))
         self.current_phase = self.current_phase + self.gap
         return val
 
 class cosine(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
+    def __init__(self, base_freq, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
         self.modulate()
-        val = math.cos(float(self.current_phase)) * self.amplitude
+        val = math.cos(float(self.current_phase))
         self.current_phase = self.current_phase + self.gap
         return val
 
 class square(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
+    def __init__(self, base_freq, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
         self.modulate()
-        val = self.amplitude if self.current_phase % (math.pi * 2) < math.pi else -1.0 * self.amplitude
+        val = 1.0 if self.current_phase % (math.pi * 2) < math.pi else -1.0
         self.current_phase = self.current_phase + self.gap
         return val
 
 class triangle(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
+    def __init__(self, base_freq, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
         self.modulate()
         ph = self.current_phase % (2 * math.pi)
         if ph < math.pi:
-            val = (((ph * self.amplitude) / math.pi) * 2) - 1
+            val = ((ph / math.pi) * 2) - 1
         else:
             val = ((((2 * math.pi) - ph) / math.pi) * 2) - 1
         self.current_phase = self.current_phase + self.gap
         return val
 
 class sawtooth(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
+    def __init__(self, base_freq, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
         self.modulate()
         ph = self.current_phase % (2 * math.pi)
-        val = ((ph * self.amplitude) / math.pi) - 1
+        val = (ph / math.pi) - 1
         self.current_phase = self.current_phase + self.gap
         return val
 
 class reverse_sawtooth(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
+    def __init__(self, base_freq, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
