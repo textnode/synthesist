@@ -17,6 +17,8 @@
 from collections.abc import Generator
 import math
 
+import shared
+
 def amplitude_from_velocity(velocity):
     return (1.0/127) * velocity
 
@@ -29,6 +31,20 @@ class combiner(Generator):
 
     def send(self, ignored_arg):
         return((next(self.gen1) + next(self.gen2)) / 2.0)
+
+    def throw(self, type=None, value=None, traceback=None):
+        raise StopIteration
+
+class combiner(Generator):
+    #returns mean of 3 input values
+    def __init__(self, gen1, gen2, gen3):
+        super().__init__()
+        self.gen1 = gen1
+        self.gen2 = gen2
+        self.gen3 = gen3
+
+    def send(self, ignored_arg):
+        return((next(self.gen1) + next(self.gen2) + next(self.gen3)) / 3.0)
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration
@@ -113,6 +129,21 @@ class limiter(Generator):
 
     def send(self, ignored_arg):
         return min(max(next(self.gen), self.lower_limit), self.upper_limit)
+
+    def throw(self, type=None, value=None, traceback=None):
+        raise StopIteration
+
+class truncater(Generator):
+    def __init__(self, gen, max_duration):
+        super().__init__()
+        self.gen = gen
+        self.samples = shared.sample_rate * max_duration
+
+    def send(self, ignored_arg):
+        self.samples -= 1
+        if self.samples < 0:
+            raise StopIteration
+        return next(self.gen)
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration

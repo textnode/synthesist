@@ -22,7 +22,7 @@ import shared
 
 class oscillator(Generator):
 
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None):
+    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
         super().__init__()
         print("Oscillator with base frequency: %fHz" % base_freq)
         self.base_freq = base_freq
@@ -32,7 +32,6 @@ class oscillator(Generator):
         self.end_phase = end_phase
         self.freq_modulator = freq_modulator
         self.freq_modulation_pct = freq_modulation_pct
-        self.envelope = envelope
         self.amplitude = self.base_amplitude
         self.gap = (math.pi * 2 * self.base_freq) / shared.sample_rate
 
@@ -45,8 +44,6 @@ class oscillator(Generator):
         if self.freq_modulator != None:
             self.current_freq = self.base_freq + (self.base_freq * self.freq_modulation_pct / 100.0 * next(self.freq_modulator))
             self.gap = (math.pi * 2 * self.current_freq) / shared.sample_rate
-        if self.envelope != None:
-            self.amplitude = self.base_amplitude * next(self.envelope)
 
     @abstractmethod
     def send(self, ignored_arg):
@@ -57,8 +54,8 @@ class oscillator(Generator):
 
 
 class sine(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct, envelope)
+    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
@@ -68,8 +65,8 @@ class sine(oscillator):
         return val
 
 class cosine(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct, envelope)
+    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
@@ -79,8 +76,8 @@ class cosine(oscillator):
         return val
 
 class square(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct, envelope)
+    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
@@ -90,8 +87,8 @@ class square(oscillator):
         return val
 
 class triangle(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct, envelope)
+    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
@@ -105,8 +102,8 @@ class triangle(oscillator):
         return val
 
 class sawtooth(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct, envelope)
+    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
@@ -117,8 +114,8 @@ class sawtooth(oscillator):
         return val
 
 class reverse_sawtooth(oscillator):
-    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0, envelope=None):
-        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct, envelope)
+    def __init__(self, base_freq, base_amplitude=1.0, start_phase=0.0, end_phase=None, freq_modulator=None, freq_modulation_pct=0.0):
+        super().__init__(base_freq, base_amplitude, start_phase, end_phase, freq_modulator, freq_modulation_pct)
 
     def send(self, ignored_arg):
         super().exhausted()
