@@ -84,7 +84,16 @@ class sequencer():
                             self.sound_factory.retool(note)
                         elif status==0x99 and note in self.pads_for_percussion:
                             print("Midi chan 10 press - pad for percussion")
-                            self.autonomous.append(sounds.cymbal())
+                            if note == 36:
+                                self.autonomous.append(sounds.bass())
+                            if note == 37:
+                                self.autonomous.append(sounds.snare())
+                            if note == 38:
+                                self.releasable['p' + str(note)] = sounds.cymbal()
+                        elif status==0x89 and note in self.pads_for_percussion:
+                            print("Midi chan 10 release - pad for percussion")
+                            if note == 38:
+                                self.releasable['p' + str(note)].release()
                         elif status==0xB0 and note==0x4A:
                             print("Midi chan 1 control/mode, knob 1 (brightness)")
                             self.sound_factory.set_envelope_frequency(velocity)

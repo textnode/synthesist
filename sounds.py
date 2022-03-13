@@ -47,13 +47,24 @@ def pure_phased(note_freq, amplitude=1.0, envelope=i_env.flat(), freq_modulator=
     cos = osc.cosine(note_freq, freq_modulator=freq_modulator, freq_modulation_pct=freq_modulation_pct)
     cos_dup = osc.cosine(note_freq, freq_modulator=freq_modulator, freq_modulation_pct=freq_modulation_pct)
     phase = phaser(cos, cos_dup, 0, control)
-    return presser(util.scaler(phase, scaling_factor=amplitude), f_env.up(duration=0.2), f_env.flat(duration=0.2), envelope, f_env.down(duration=10.2))
+    return presser(util.scaler(phase, scaling_factor=amplitude), f_env.up(duration=0.2), f_env.flat(duration=0.2), envelope, f_env.down(duration=1.0))
 
-def cymbal(amplitude=1.0):
-    noi1 = noise.uniform_rand(step_size=1)
-    noi2 = noise.uniform_rand(step_size=5)
+def cymbal(amplitude=0.05, envelope=i_env.flat()):
+    noi1 = noise.uniform_rand(step_size=5)
+    noi2 = noise.uniform_rand(step_size=10)
+    comb = util.combine2(noi1, noi2)
+    return presser(util.scaler(comb, scaling_factor=amplitude), f_env.up(duration=0.05), f_env.flat(duration=0.2), envelope, f_env.down(duration=1.0))
+
+def snare(amplitude=0.05):
     noi3 = noise.uniform_rand(step_size=10)
-    comb = util.combine3(noi1, noi2, noi3)
-    strike = striker(util.scaler(comb, scaling_factor=amplitude), f_env.up(duration=0.05), f_env.flat(duration=0.2), f_env.down(duration=1.0))
+    strike = striker(util.scaler(noi3, scaling_factor=amplitude), f_env.up(duration=0.01), f_env.flat(duration=0.12), f_env.down(duration=0.01))
+    return strike
+
+def bass(amplitude=1.0):
+    sin1 = osc.sine(200)
+    sin2 = osc.sine(300)
+    sin3 = osc.sine(400)
+    comb = util.combine3(sin1, sin2, sin3)
+    strike = striker(util.scaler(comb, scaling_factor=amplitude), f_env.up(duration=0.01), f_env.flat(duration=0.02), f_env.down(duration=0.12))
     return strike
 

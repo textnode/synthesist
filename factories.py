@@ -34,11 +34,11 @@ class sound_factory():
         if note == 40:
             self.tooling = sounds.pure_sine
         elif note == 41:
-            self.tooling = sounds.pure_phased
-        elif note == 42:
             self.tooling = sounds.pure_triangle
-        elif note == 43:
+        elif note == 42:
             self.tooling = sounds.pure_sawtooth
+        elif note == 43:
+            self.tooling = sounds.pure_phased
         else:
             self.tooling = sounds.pure_sine
         print("Tooling is now: %s" % repr(self.tooling))
