@@ -16,7 +16,7 @@
 
 import math
 
-from oscillators import sine, cosine, constant
+from oscillators import sine, cosine
 
 class up(sine):
     def __init__(self, duration):
@@ -38,8 +38,4 @@ class down_30_pct(cosine):
         end = math.pi / 4
         freq = ((end - start) / (2 * math.pi)) / duration
         super().__init__(freq, start_phase=start, end_phase=end)
-
-class flat(constant):
-    def __init__(self, duration, amplitude=1.0):
-        super().__init__(duration, amplitude)
 

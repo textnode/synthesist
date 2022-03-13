@@ -14,27 +14,17 @@
 #
 # Version 0.1
 
-import itertools
-import random
+from collections.abc import Generator
+import math
 
+import oscillators as osc
 import shared
 
-random.seed(shared.seed)
-uniform_rands = []
-for _ in range(shared.sample_rate):
-    rand = random.uniform(-1.0, 1.0)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
-    uniform_rands.append(rand)
+class cycle_cache():
+    def __init__(self):
+        self.cache = {}
+        for frequency in range(1, 2000000, 1):
+            self.cache[frequency / 100.0] = list(osc.square(frequency / 100.0, end_phase=math.pi / 2))
+   
 
-def uniform_rand(step_size=10):
-    return itertools.cycle(itertools.islice(uniform_rands, 0, None, step_size))
-
-
+cyc = cycle_cache() 

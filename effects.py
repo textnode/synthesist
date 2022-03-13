@@ -57,7 +57,7 @@ class echo(Generator):
         self.exhausted_generators = []
         for copy in copies:
             #print("Adding copy with delay: %f and amplitude: %f" % (current_delay, current_amplitude))
-            self.generators.append(itertools.chain(osc.silence(current_delay), util.scaler(copy, current_amplitude)))
+            self.generators.append(itertools.chain(util.silence(current_delay), util.scaler(copy, current_amplitude)))
             current_delay += delay
             current_amplitude *= decay
 

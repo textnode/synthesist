@@ -16,13 +16,14 @@
 
 from collections.abc import Generator
 import math
+import itertools
 
 import oscillators as osc
 
 class sine(Generator):
     def __init__(self, freq, start_phase=0.0):
         super().__init__()
-        self.gen = osc.sine(freq, start_phase=start_phase)
+        self.gen = itertools.cycle(osc.sine(freq, start_phase=start_phase, end_phase=math.pi * 2))
 
     def send(self, ignored_arg):
         return (next(self.gen) + 1.0) / 2.0
@@ -33,7 +34,7 @@ class sine(Generator):
 class cosine(Generator):
     def __init__(self, freq, start_phase=0.0):
         super().__init__()
-        self.gen = osc.cosine(freq, start_phase=start_phase)
+        self.gen = itertools.cycle(osc.cosine(freq, start_phase=start_phase, end_phase=math.pi * 2))
 
     def send(self, ignored_arg):
         return (next(self.gen) + 1.0) / 2.0
@@ -44,7 +45,7 @@ class cosine(Generator):
 class square(Generator):
     def __init__(self, freq, start_phase=0.0):
         super().__init__()
-        self.gen = osc.square(freq, start_phase=start_phase)
+        self.gen = itertools.cycle(osc.square(freq, start_phase=start_phase, end_phase=math.pi * 2))
 
     def send(self, ignored_arg):
         return (next(self.gen) + 1.0) / 2.0
@@ -55,7 +56,7 @@ class square(Generator):
 class triangle(Generator):
     def __init__(self, freq, start_phase=0.0):
         super().__init__()
-        self.gen = osc.triangle(freq, start_phase=start_phase)
+        self.gen = itertools.cycle(osc.triangle(freq, start_phase=start_phase, end_phase=math.pi * 2))
 
     def send(self, ignored_arg):
         return (next(self.gen) + 1.0) / 2.0
@@ -66,7 +67,7 @@ class triangle(Generator):
 class sawtooth(Generator):
     def __init__(self, freq, start_phase=0.0):
         super().__init__()
-        self.gen = osc.sawtooth(freq, start_phase=start_phase)
+        self.gen = itertools.cycle(osc.sawtooth(freq, start_phase=start_phase, end_phase=math.pi * 2))
 
     def send(self, ignored_arg):
         return (next(self.gen) + 1.0) / 2.0
@@ -77,21 +78,10 @@ class sawtooth(Generator):
 class reverse_sawtooth(Generator):
     def __init__(self, freq, start_phase=0.0):
         super().__init__()
-        self.gen = osc.reverse_sawtooth(freq, start_phase=start_phase)
+        self.gen = itertools.cycle(osc.reverse_sawtooth(freq, start_phase=start_phase, end_phase=math.pi * 2))
 
     def send(self, ignored_arg):
         return (next(self.gen) + 1.0) / 2.0
-
-    def throw(self, type=None, value=None, traceback=None):
-        raise StopIteration
-
-class flat(Generator):
-    def __init__(self, amplitude=1.0):
-        super().__init__()
-        self.gen = osc.constant(amplitude=amplitude)
-
-    def send(self, ignored_arg):
-        return ((next(self.gen)) + 1.0) / 2.0
 
     def throw(self, type=None, value=None, traceback=None):
         raise StopIteration

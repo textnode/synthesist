@@ -16,6 +16,7 @@
 
 import sys
 import math
+import itertools
 
 import shared
 import oscillators as osc
@@ -30,22 +31,22 @@ import effects
 import sounds
 
 #play a few sounds
-control = osc.cosine(1, start_phase=math.pi / 2)
-cos = osc.cosine(441, start_phase = math.pi / 2)
-cos_dup = osc.cosine(441, start_phase = math.pi / 2)
+control = itertools.cycle(osc.cosine(1, start_phase=math.pi / 2))
+cos = itertools.cycle(osc.cosine(441, start_phase = math.pi / 2))
+cos_dup = itertools.cycle(osc.cosine(441, start_phase = math.pi / 2))
 phase = effects.phaser(cos, cos_dup, 0, control)
-strike = notes.striker(phase, f_env.up(0.100), f_env.flat(0.300), f_env.down(0.100))
+strike = notes.striker(phase, f_env.up(0.100), util.max(), f_env.down(0.100))
 echo = effects.echo(strike, 1.0, 0.5, 3)
-shared.play(echo)
+shared.plot(echo)
 
-sig_env = i_env.sine(4)
-min_env = util.fabser(sig_env)
-sig = osc.cosine(441)
-noise_env = i_env.cosine(2)
-noi = noise.uniform_rand(step_size=1)
+sig_env = itertools.cycle(i_env.sine(4))
+min_env = itertools.cycle(util.fabser(sig_env))
+sig = itertools.cycle(osc.cosine(441))
+noise_env = itertools.cycle(i_env.cosine(2))
+noi = itertools.cycle(noise.uniform_rand(step_size=1))
 add = util.combine2(sig, noi)
 strike = notes.striker(add, f_env.up(3.0), f_env.down_30_pct(5.0), f_env.down(2.0))
-shared.play(strike)
+shared.plot(strike)
 
 
 
@@ -57,13 +58,11 @@ shared.plot(osc.square(441, end_phase=31.4), title="Square 441Hz ~ 10 cycles")
 shared.plot(osc.triangle(441, end_phase=31.4), title="Triangle 441Hz ~ 10 cycles")
 shared.plot(osc.sawtooth(441, end_phase=31.4), title="Sawtooth 441Hz ~ 10 cycles")
 shared.plot(osc.reverse_sawtooth(441, end_phase=31.4), title="Reverse sawtooth 441Hz ~ 10 cycles")
-shared.plot(osc.constant(duration=0.1), title="Constant 1.0 for 0.1 seconds")
-shared.plot(osc.silence(duration=0.1), title="Silence for 0.1 seconds")
+shared.plot(util.silence(duration=0.1), title="Silence for 0.1 seconds")
 
 shared.plot(f_env.up(duration=1.0), title="Finite up envelope taking 1 second")
 shared.plot(f_env.down(duration=1.0), title="Finite down envelope taking 1 second")
 shared.plot(f_env.down_30_pct(duration=1.0), title="Finite down 30% envelope taking 1 second")
-shared.plot(f_env.flat(1.0), title="Finite flat 1.0 envelope taking 1 second")
 
 shared.plot(i_env.sine(441), max_duration=0.01, title="Infinite sine 441Hz envelope, terminated at 0.01 seconds")
 shared.plot(i_env.cosine(441), max_duration=0.01, title="Infinite cosine 441Hz envelope, terminated at 0.01 seconds")
@@ -71,12 +70,11 @@ shared.plot(i_env.square(441), max_duration=0.01, title="Infinite square 441Hz e
 shared.plot(i_env.triangle(441), max_duration=0.01, title="Infinite triangle 441Hz envelope, terminated at 0.01 seconds")
 shared.plot(i_env.sawtooth(441), max_duration=0.01, title="Infinite sawtooth 441Hz envelope, terminated at 0.01 seconds")
 shared.plot(i_env.reverse_sawtooth(441), max_duration=0.01, title="Infinite reverse-sawtooth 441Hz envelope, terminated at 0.01 seconds")
-shared.plot(i_env.flat(1.0), max_duration=0.01, title="Infinite flat 1.0 envelope, terminated at 0.01 seconds")
 
 shared.plot(noise.uniform_rand(step_size=1), max_duration=0.01, title="Infinite random noise, terminated at 0.01 seconds")
 
 #notes.presser()
-shared.plot(notes.striker(osc.sine(441), f_env.up(1.0), f_env.flat(1.0), f_env.down(1.0)), title="Striker note, 441Hz Sine with envelopes: up 1 second, flat 1 second, down 1 second")
+shared.plot(notes.striker(osc.sine(441), f_env.up(1.0), util.max(), f_env.down(1.0)), title="Striker note, 441Hz Sine with envelopes: up 1 second, flat 1 second, down 1 second")
 
 shared.plot(util.combine2(osc.sine(441), osc.square(220)), max_duration=0.01, title="Sine 441Hz and square 220Hz combined, terminated at 0.01 seconds")
 shared.plot(util.minZeroer(osc.sine(441)), max_duration=0.01, title="Sine 441Hz min-zeroed, terminated at 0.01 seconds")

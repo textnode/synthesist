@@ -79,10 +79,10 @@ class sound_factory():
 
     def produce(self, note, velocity):
         if self.envelope != None and self.vibrato != None:
-            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), envelope=self.envelope(self.envelope_freq), freq_modulator=self.vibrato(self.vibrato_freq), freq_modulation_pct=self.vibrato_depth)
+            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), envelope=self.envelope(self.envelope_freq))
         elif self.envelope != None:
             return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), envelope=self.envelope(self.envelope_freq))
         elif self.vibrato != None:
-            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity), freq_modulator=self.vibrato(self.vibrato_freq), freq_modulation_pct=self.vibrato_depth)
+            return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity))
         else:
             return self.tooling(midi.midi_to_frequency(note), amplitude=util.amplitude_from_velocity(velocity))

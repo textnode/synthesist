@@ -14,10 +14,23 @@
 #
 # Version 0.1
 
+import itertools
 from collections.abc import Generator
 import math
 
 import shared
+
+def __constant(value, duration=None):
+    if duration != None:
+        return itertools.repeat(value, int(duration * shared.sample_rate))
+    else:
+        return itertools.repeat(value)
+
+def max(duration=None):
+    return __constant(1.0, duration)
+
+def silence(duration=None):
+    return __constant(0.0, duration)
 
 def amplitude_from_velocity(velocity):
     return (1.0/127) * velocity
